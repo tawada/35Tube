@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>YouTube風ページ</title>
+  <style>
+    /* リセット用 */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: sans-serif;
+      background-color: #f9f9f9;
+      color: #0f0f0f;
+    }
+
+    /* ヘッダー */
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 16px;
+      background-color: #fff;
+      border-bottom: 1px solid #ddd;
+      position: sticky;
+      top: 0;
+      z-index: 999;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+    }
+
+    .logo img {
+      height: 28px;
+    }
+
+    .search-bar {
+      display: flex;
+      flex: 1;
+      max-width: 600px;
+      margin: 0 16px;
+    }
+
+    .search-bar input {
+      flex: 1;
+      padding: 6px 12px;
+      border: 1px solid #ccc;
+      border-right: none;
+      border-radius: 2px 0 0 2px;
+      outline: none;
+    }
+
+    .search-bar button {
+      padding: 6px 16px;
+      border: 1px solid #ccc;
+      border-left: none;
+      cursor: pointer;
+      background-color: #f8f8f8;
+      border-radius: 0 2px 2px 0;
+    }
+
+    .header-icons {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .header-icons img {
+      width: 24px;
+      height: 24px;
+      cursor: pointer;
+    }
+
+    /* ナビゲーション（カテゴリ） */
+    nav {
+      display: flex;
+      gap: 16px;
+      overflow-x: auto;
+      white-space: nowrap;
+      padding: 8px 16px;
+      background-color: #fff;
+      border-bottom: 1px solid #ddd;
+    }
+
+    nav::-webkit-scrollbar {
+      display: none; /* スクロールバー非表示（必要に応じて） */
+    }
+
+    nav li {
+      list-style: none;
+      display: inline-block;
+      padding: 6px 12px;
+      border-radius: 20px;
+      background-color: #f2f2f2;
+      cursor: pointer;
+      font-size: 14px;
+      margin-right: 8px;
+      white-space: nowrap;
+    }
+
+    nav li:hover {
+      background-color: #e8e8e8;
+    }
+
+    /* メインコンテンツ */
+    main {
+      padding: 16px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .section-title {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 12px;
+    }
+
+    .videos-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 16px;
+    }
+
+    .video-card {
+      background-color: #fff;
+      border-radius: 6px;
+      overflow: hidden;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .video-card:hover {
+      transform: scale(1.02);
+    }
+
+    .video-thumb {
+      width: 100%;
+      aspect-ratio: 16 / 9; 
+      background-color: #ddd;
+      background-size: cover;
+      background-position: center;
+    }
+
+    .video-info {
+      padding: 8px;
+    }
+
+    .video-info h3 {
+      font-size: 14px;
+      margin-bottom: 4px;
+      line-height: 1.4;
+    }
+
+    .video-info p {
+      font-size: 12px;
+      color: #555;
+    }
+
+    /* ショート(Shorts) */
+    .shorts-container {
+      display: flex;
+      gap: 12px;
+      overflow-x: auto;
+      margin: 16px 0;
+      padding-bottom: 8px;
+    }
+
+    .shorts-container::-webkit-scrollbar {
+      display: none; /* スクロールバー非表示（必要に応じて） */
+    }
+
+    .short-item {
+      min-width: 120px;
+      height: 200px;
+      background-color: #fff;
+      border-radius: 6px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .short-thumb {
+      width: 100%;
+      height: 70%;
+      background-color: #ccc;
+      background-size: cover;
+      background-position: center;
+    }
+
+    .short-title {
+      padding: 6px;
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ヘッダー -->
+  <header>
+    <div class="logo">
+      <img src="https://placehold.jp/100x28.png?text=Logo" alt="Logo" />
+    </div>
+
+    <div class="search-bar">
+      <input type="text" placeholder="検索" />
+      <button>検索</button>
+    </div>
+
+    <div class="header-icons">
+      <!-- 仮のアイコン -->
+      <img src="https://placehold.jp/24x24.png?text=M" alt="Menu Icon" />
+      <img src="https://placehold.jp/24x24.png?text=N" alt="Notifications Icon" />
+      <img src="https://placehold.jp/24x24.png?text=U" alt="User Icon" />
+    </div>
+  </header>
+
+  <!-- カテゴリナビゲーション -->
+  <nav>
+    <ul>
+      <li>すべて</li>
+      <li>ライブ</li>
+      <li>ゲーム</li>
+      <li>アニメーション</li>
+      <li>最近アップロードされた動画</li>
+      <li>視聴済み</li>
+      <li>新しい動画</li>
+    </ul>
+  </nav>
+
+  <!-- メインコンテンツ -->
+  <main>
+    <!-- スポンサー枠など -->
+    <section>
+      <div class="section-title">スポンサー広告</div>
+      <div class="videos-grid">
+        <div class="video-card">
+          <div class="video-thumb" style="background-image: url('https://placehold.jp/400x225.png?text=Ad+Banner');">
+          </div>
+          <div class="video-info">
+            <h3>title</h3>
+            <p>Sponsor: name</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 通常の動画リスト -->
+    <section>
+      <div class="section-title">おすすめ動画</div>
+      <div class="videos-grid">
+        <div class="video-card">
+          <div class="video-thumb" style="background-image: url('https://placehold.jp/400x225.png?text=Thumb');">
+          </div>
+          <div class="video-info">
+            <h3>title</h3>
+            <p>info</p>
+          </div>
+        </div>
+
+        <div class="video-card">
+          <div class="video-thumb" style="background-image: url('https://placehold.jp/400x225.png?text=Thumb');">
+          </div>
+          <div class="video-info">
+            <h3>title</h3>
+            <p>info</p>
+          </div>
+        </div>
+
+        <!-- 適当に追加 -->
+        <div class="video-card">
+          <div class="video-thumb" style="background-image: url('https://placehold.jp/400x225.png?text=Thumb');">
+          </div>
+          <div class="video-info">
+            <h3>title</h3>
+            <p>info</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ショート (Shorts) -->
+    <section>
+      <div class="section-title">ショート</div>
+      <div class="shorts-container">
+        <div class="short-item">
+          <div class="short-thumb" style="background-image: url('https://placehold.jp/120x140.png?text=Thumb');"></div>
+          <div class="short-title">title</div>
+        </div>
+        <div class="short-item">
+            <div class="short-thumb" style="background-image: url('https://placehold.jp/120x140.png?text=Thumb');"></div>
+            <div class="short-title">title</div>
+          </div>
+        <div class="short-item">
+            <div class="short-thumb" style="background-image: url('https://placehold.jp/120x140.png?text=Thumb');"></div>
+            <div class="short-title">title</div>
+          </div>
+      </div>
+    </section>
+  </main>
+
+</body>
+</html>
