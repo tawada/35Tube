@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>YouTube風 検索結果ページ</title>
+  <style>
+    /* リセット */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f9f9f9;
+      color: #0f0f0f;
+    }
+
+    /* ヘッダー */
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background-color: #fff;
+      padding: 8px 16px;
+      border-bottom: 1px solid #ccc;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .logo img {
+      height: 28px;
+    }
+
+    .search-bar {
+      display: flex;
+      flex: 1;
+      max-width: 600px;
+      margin: 0 16px;
+    }
+
+    .search-bar input {
+      flex: 1;
+      padding: 6px 12px;
+      border: 1px solid #ccc;
+      border-right: none;
+      border-radius: 2px 0 0 2px;
+      outline: none;
+    }
+
+    .search-bar button {
+      padding: 6px 16px;
+      border: 1px solid #ccc;
+      border-left: none;
+      background-color: #f8f8f8;
+      cursor: pointer;
+      border-radius: 0 2px 2px 0;
+    }
+
+    .header-icons {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .header-icons img {
+      width: 24px;
+      height: 24px;
+      cursor: pointer;
+    }
+
+    /* カテゴリタブ */
+    nav {
+      display: flex;
+      gap: 16px;
+      overflow-x: auto;
+      background-color: #fff;
+      border-bottom: 1px solid #ccc;
+      padding: 8px 16px;
+    }
+
+    nav::-webkit-scrollbar {
+      display: none;
+    }
+
+    nav li {
+      list-style: none;
+      display: inline-block;
+      padding: 6px 12px;
+      background-color: #f2f2f2;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 14px;
+      margin-right: 8px;
+      white-space: nowrap;
+    }
+
+    nav li:hover {
+      background-color: #e2e2e2;
+    }
+
+    /* メインコンテンツ */
+    main {
+      padding: 16px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .search-result {
+      background-color: #fff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      // padding: 16px;
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+
+    .search-result img.thumb {
+      width: 300px;
+      aspect-ratio: 16 / 9;
+      border-radius: 4px;
+      object-fit: cover;
+    }
+
+    .search-result-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin: 16px;
+    }
+
+    .search-result-title {
+      font-weight: bold;
+      font-size: 16px;
+      line-height: 1.4;
+    }
+
+    .search-result-channel {
+      color: #666;
+      font-size: 14px;
+    }
+
+    .search-result-description {
+      font-size: 13px;
+      color: #444;
+      line-height: 1.4;
+      margin-top: 4px;
+    }
+
+    .sponsor-badge {
+      display: inline-block;
+      padding: 4px 6px;
+      background-color: #ddeeff;
+      color: #000;
+      font-size: 12px;
+      border-radius: 4px;
+      margin-bottom: 8px;
+    }
+
+    .subscribe-button {
+      display: inline-block;
+      padding: 6px 12px;
+      background-color: #000;
+      color: #fff;
+      font-size: 14px;
+      border: none;
+      border-radius: 2px;
+      cursor: pointer;
+    }
+
+    .subscribe-button:hover {
+      background-color: #333;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ヘッダー -->
+  <header>
+    <div class="logo">
+      <img src="https://placehold.jp/100x28.png?text=Logo" alt="Logo" />
+    </div>
+    <div class="search-bar">
+      <input type="text" placeholder="検索" />
+      <button>検索</button>
+    </div>
+    <div class="header-icons">
+      <img src="https://placehold.jp/24x24.png?text=M" alt="Menu" />
+      <img src="https://placehold.jp/24x24.png?text=N" alt="Notifications" />
+      <img src="https://placehold.jp/24x24.png?text=U" alt="User Icon" />
+    </div>
+  </header>
+
+  <!-- カテゴリタブ -->
+  <nav>
+    <ul>
+      <li>すべて</li>
+      <li>ライブ</li>
+      <li>ゲーム</li>
+      <li>アニメーション</li>
+      <li>最近アップロードされた動画</li>
+      <li>視聴済み</li>
+      <li>新しい動画</li>
+    </ul>
+  </nav>
+
+  <!-- メインコンテンツ -->
+  <main>
+
+    <!-- スポンサー広告 -->
+    <div class="search-result">
+      <img class="thumb" src="https://placehold.jp/300x120.png?text=Thumbnail" alt="Sponsor Thumbnail" />
+      <div class="search-result-content">
+        <span class="sponsor-badge">スポンサー</span>
+        <div class="search-result-title">
+          title
+        </div>
+        <div class="search-result-channel">
+          channel
+        </div>
+        <div class="search-result-description">
+          search-result-description
+        </div>
+      </div>
+    </div>
+
+    <!-- ホロライブ公式チャンネル -->
+    <div class="search-result">
+      <img class="thumb" src="https://placehold.jp/300x120.png?text=Thumbnail" alt="hololive channel Thumbnail" />
+      <div class="search-result-content">
+        <div class="search-result-title">
+          channel name
+        </div>
+        <div class="search-result-channel">
+          @channel ・ チャンネル登録者数 100万人
+        </div>
+        <div class="search-result-description">
+          search-result-description
+        </div>
+        <button class="subscribe-button">チャンネル登録</button>
+      </div>
+    </div>
+
+    <!-- 他の動画 (例) -->
+    <div class="search-result">
+      <img class="thumb" src="https://placehold.jp/300x120.png?text=Thumbnail" alt="Video Thumbnail" />
+      <div class="search-result-content">
+        <div class="search-result-title">title</div>
+        <div class="search-result-channel">channel • 10万 回視聴 • 1時間前</div>
+        <div class="search-result-description">
+          search-result-description
+        </div>
+      </div>
+    </div>
+
+    <div class="search-result">
+      <img class="thumb" src="https://placehold.jp/300x120.png?text=Thumbnail" alt="Video Thumbnail" />
+      <div class="search-result-content">
+        <div class="search-result-title">title</div>
+        <div class="search-result-channel">channel • 10万 回視聴 • 1日前</div>
+        <div class="search-result-description">
+          search-result-description
+        </div>
+      </div>
+    </div>
+
+  </main>
+</body>
+</html>
