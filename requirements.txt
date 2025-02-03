@@ -1,2 +1,6 @@
 google-api-python-client==1.9.3
 pydantic==2.10.6
+fastapi
+fastapi-pagination
+sqlalchemy
+uvicorn
