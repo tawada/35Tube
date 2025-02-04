@@ -83,3 +83,14 @@ async def search(
         "page": page,
         "size": size,
     }
+
+
+@router.get("/video", response_model=schemas.Video)
+async def get_video(
+    video_id: str,
+    db: Session = Depends(database.get_db),
+):
+    video = db.query(models.Video).filter(models.Video.video_id == video_id).first()
+    if video is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Video not found")
+    return video
