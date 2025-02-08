@@ -1,6 +1,8 @@
 google-api-python-client==1.9.3
 pydantic==2.10.6
+pydantic-settings==2.7.1
 fastapi
 fastapi-pagination
 sqlalchemy
 uvicorn
+setuptools==75.8.0

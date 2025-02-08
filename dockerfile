@@ -11,7 +11,7 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /app
 
 # FastAPI アプリと必要なファイルをコンテナにコピー
-COPY app/ /app/app/
+# COPY backend/src/ /app/app/
 COPY requirements.txt /app/
 RUN pip install --no-cache-dir -r requirements.txt
 
@@ -22,7 +22,7 @@ COPY nginx.conf /etc/nginx/nginx.conf
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 # フロントエンドの静的ファイル（事前ビルド済み）を配置
-COPY frontend/ /app/frontend/
+# COPY frontend/public/ /app/frontend/
 
 # Cloud Run が利用するポート 8080 を公開
 EXPOSE 8080

@@ -4,18 +4,18 @@ from fastapi_pagination.ext.sqlalchemy import paginate
 from sqlalchemy import select, func
 from sqlalchemy.orm import Session
 
+from ..config import settings
+
 from . import database, models, schemas, youtube
 
-if database.DATABASE_URL.startswith("sqlite"):
+if settings.database_url.startswith("sqlite"):
     # SQLite
     func_random = func.random
 else:
     # MySQL
     func_random = func.rand
 
-router = APIRouter(
-    prefix="/api",
-)
+router = APIRouter()
 
 
 @router.get("/sponsoredVideos", response_model=Page[schemas.Video])
