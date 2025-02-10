@@ -15,7 +15,10 @@ else:
     # MySQL
     func_random = func.rand
 
-router = APIRouter()
+router = APIRouter(
+    prefix="/api",
+    tags=["videos"],
+)
 
 
 @router.get("/sponsoredVideos", response_model=Page[schemas.Video])
