@@ -199,6 +199,45 @@
       padding: 6px;
       font-size: 12px;
     }
+
+    /* スケルトン用のクラス */
+    .skeleton {
+      background-color: #eee;
+      color: transparent; /* ローディング時は文字色を透明に */
+      border-radius: 8px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* 光るアニメーションをつけたい要素に shimmer クラスを付与 */
+    .shimmer::after {
+      content: "";
+      display: block;
+      position: absolute;
+      top: 0;
+      left: -150px;
+      height: 100%;
+      width: 150px;
+      background: linear-gradient(
+        to right,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.6) 50%,
+        rgba(255, 255, 255, 0) 100%
+      );
+      animation: shimmer 1.5s infinite;
+    }
+
+    @keyframes shimmer {
+      0% {
+        left: -150px;
+      }
+      50% {
+        left: 100%;
+      }
+      100% {
+        left: 100%;
+      }
+    }
   </style>
 </head>
 <body>
@@ -241,12 +280,11 @@
     <section>
       <div class="section-title">スポンサー広告</div>
       <div class="videos-grid">
-        <div class="video-card">
-          <div class="video-thumb" style="background-image: url('https://placehold.jp/400x225.png?text=Ad+Banner');">
-          </div>
+        <div class="video-card skeleton shimmer sponsor-video">
+          <div class="video-thumb"></div>
           <div class="video-info">
-            <h3>title</h3>
-            <p>Sponsor: name</p>
+            <div class="title"></div>
+            <div class="desc"></div>
           </div>
         </div>
       </div>
@@ -256,33 +294,30 @@
     <section>
       <div class="section-title">おすすめ動画</div>
       <div class="videos-grid">
-        <div class="video-card">
-          <div class="video-thumb" style="background-image: url('https://placehold.jp/400x225.png?text=Thumb');">
-          </div>
+        <div class="video-card skeleton shimmer recommended-video">
+          <div class="video-thumb"></div>
           <div class="video-info">
-            <h3>title</h3>
-            <p>info</p>
+            <div class="title"></div>
+            <div class="desc"></div>
           </div>
         </div>
 
-        <div class="video-card">
-          <div class="video-thumb" style="background-image: url('https://placehold.jp/400x225.png?text=Thumb');">
-          </div>
+        <div class="video-card skeleton shimmer recommended-video">
+          <div class="video-thumb"></div>
           <div class="video-info">
-            <h3>title</h3>
-            <p>info</p>
+            <div class="title"></div>
+            <div class="desc"></div>
           </div>
         </div>
 
-        <!-- 適当に追加 -->
-        <div class="video-card">
-          <div class="video-thumb" style="background-image: url('https://placehold.jp/400x225.png?text=Thumb');">
-          </div>
+        <div class="video-card skeleton shimmer recommended-video">
+          <div class="video-thumb"></div>
           <div class="video-info">
-            <h3>title</h3>
-            <p>info</p>
+            <div class="title"></div>
+            <div class="desc"></div>
           </div>
         </div>
+
       </div>
     </section>
 
@@ -305,6 +340,39 @@
       </div>
     </section>
   </main>
+
+<script>
+  function loadVideo(videoCard, video) {
+    // 動画の内容を差し替える
+    videoCard.innerHTML = `
+      <div class="video-thumb" style="background-image: url('${video.thumbnail}');"></div>
+      <div class="video-info">
+        <h3>${video.title}</h3>
+        <p>${video.description}</p>
+      </div>
+    `;
+    // スケルトンを非表示にする
+    videoCard.classList.remove("skeleton", "shimmer");
+  }
+  async function loadVideos() {
+    // スポンサー動画の内容を差し替える
+    const response = await fetch("/api/sponsoredVideos");
+    const data = await response.json();
+    const video = data.items[0];
+    const sponsorVideo = document.querySelector(".sponsor-video");
+    loadVideo(sponsorVideo, video);
+
+    // おすすめ動画の内容を差し替える
+    const response2 = await fetch("/api/recommendedVideos");
+    const data2 = await response2.json();
+    const videos = data2.items;
+    const videoCards = document.querySelectorAll(".recommended-video");
+    videos.forEach((video, index) => {
+      loadVideo(videoCards[index], video);
+    });
+  }
+  document.addEventListener("DOMContentLoaded", loadVideos);
+</script>
 
 </body>
 </html>
