@@ -7,3 +7,5 @@ class Video(BaseModel):
     title: str
     description: str
     thumbnail: str
+    channel_title: str
+

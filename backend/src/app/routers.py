@@ -74,6 +74,7 @@ async def search(
                 title=item['snippet']['title'],
                 description=item['snippet']['description'],
                 thumbnail=item['snippet']['thumbnails']['high']['url'],
+                channel_title=item['snippet']['channelTitle'],
             )
             db.add(video)
             db.commit()
