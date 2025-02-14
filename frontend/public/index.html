@@ -371,6 +371,10 @@
       loadVideo(videoCards[index], video);
     });
   }
+  document.querySelector(".search-bar button").addEventListener("click", () => {
+    const searchQuery = document.querySelector(".search-bar input").value;
+    window.location.href = `/results/?search_query=${searchQuery}`;
+  });
   document.addEventListener("DOMContentLoaded", loadVideos);
 </script>
 
