@@ -218,6 +218,13 @@
         left: 100%;
       }
     }
+    @keyframes shake {
+      0% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      50% { transform: translateX(5px); }
+      75% { transform: translateX(-5px); }
+      100% { transform: translateX(5px); }
+    }
 
   </style>
 </head>
@@ -273,7 +280,7 @@
     </div>
 
     <!-- チャンネル -->
-    <div class="search-result">
+    <div class="search-result search-channel">
       <div class="thumb skeleton shimmer"></div>
       <div class="search-result-content">
         <div class="search-result-title">
@@ -290,7 +297,7 @@
     </div>
 
     <!-- 他の動画 -->
-    <div class="search-result">
+    <div class="search-result search-video">
       <div class="thumb skeleton shimmer"></div>
       <div class="search-result-content">
         <div class="search-result-title">title</div>
@@ -301,22 +308,46 @@
       </div>
     </div>
 
-    <div class="search-result">
-      <img class="thumb" src="https://placehold.jp/300x120.png?text=Thumbnail" alt="Video Thumbnail" />
-      <div class="search-result-content">
-        <div class="search-result-title">title</div>
-        <div class="search-result-channel">channel • 10万 回視聴 • 1日前</div>
-        <div class="search-result-description">
-          search-result-description
-        </div>
-      </div>
-    </div>
-
   </main>
   <script>
-    function loadResult(resultCard, video) {
+    async function clickSearchButtonForBlank() {
+        // 検索バーの値を取得する
+        const searchInput = document.querySelector(".search-bar input");
+        const searchButton = document.querySelector(".search-bar button");
+        // 検索バーにフォーカス
+        searchInput.focus();
+        // 検索バーに赤いハイライト
+        searchInput.style.border = "1px solid red";
+        searchInput.style.backgroundColor = "#ffcccc";
+        // 検索バーとボタンがそれぞれ震える
+        searchButton.style.animation = "shake 0.3s";
+        searchInput.style.animation = "shake 0.3s";
+
+        // 少ししたら消す
+        setTimeout(() => {
+          searchInput.style.border = "1px solid #ccc";
+          searchInput.style.backgroundColor = "#fff";
+          searchButton.style.animation = "";
+          searchInput.style.animation = "";
+        }, 300);
+    }
+    async function clickSearchButton() {
+      // 検索バーの値を取得する
+      const searchInput = document.querySelector(".search-bar input");
+      const searchQuery = searchInput.value;
+
+      if (!searchQuery) {
+        // 検索バーが空の場合はエラー処理を行う
+        clickSearchButtonForBlank();
+        return;
+      }
+
+      // URLにsearch_queryパラメータを付与してリダイレクトする
+      window.location.href = `/results/?search_query=${searchQuery}`;
+    }
+    function updateSponsorVideo(videoCard, video) {
       // 動画の内容を差し替える
-      resultCard.innerHTML = `
+      videoCard.innerHTML = `
       <img class="thumb" src="${video.thumbnail}" alt="Sponsor Thumbnail" />
       <div class="search-result-content">
         <span class="sponsor-badge">スポンサー</span>
@@ -332,17 +363,105 @@
       </div>
       `;
       // スケルトンを非表示にする
-      resultCard.classList.remove("skeleton", "shimmer");
+      videoCard.classList.remove("skeleton", "shimmer");
     }
-    async function loadVideos() {
+    function updateChannel(channelCard, channel) {
+      // チャンネルの内容を差し替える
+      channelCard.innerHTML = `
+      <img class="thumb" src="${channel.thumbnail}" alt="Channel Thumbnail" />
+      <div class="search-result-content">
+        <div class="search-result-title">
+          ${channel.title}
+        </div>
+        <div class="search-result-channel">
+          @${channel.channel_id} ・ チャンネル登録者数 ${channel.subscriber_count}人
+        </div>
+        <div class="search-result-description">
+          ${channel.description}
+        </div>
+        <button class="subscribe-button">チャンネル登録</button>
+      </div>
+      `;
+      // スケルトンを非表示にする
+      channelCard.classList.remove("skeleton", "shimmer");
+    }
+    function createVideoCard(video) {
+      // 動画の内容を差し替える
+      const videoCard = document.createElement("div");
+      videoCard.classList.add("search-result");
+      videoCard.innerHTML = `
+      <img class="thumb" src="${video.thumbnail}" alt="Video Thumbnail" />
+      <div class="search-result-content">
+        <div class="search-result-title">
+          ${video.title}
+        </div>
+        <div class="search-result-channel">
+          ${video.channel_title} • ${video.publish_time}
+        </div>
+        <div class="search-result-description">
+          ${video.description}
+        </div>
+      </div>
+      `;
+      return videoCard;
+    }
+    async function loadSearchBar() {
+      // 検索ボタンにlistenerを追加する
+      const searchButton = document.querySelector(".search-bar button");
+      searchButton.addEventListener("click", clickSearchButton);
+
+      // URLのsearch_queryパラメータを取得する
+      const urlParams = new URLSearchParams(window.location.search);
+      const searchQuery = urlParams.get("search_query");
+      // 検索バーにクエリをセットする
+      const searchInput = document.querySelector(".search-bar input");
+      searchInput.value = searchQuery;
+      // fetch
+      if (searchQuery) {
+        const response = await fetch(`/api/search?query=${searchQuery}`);
+        const data = await response.json();
+        const videos = data.items;
+        const videoSkelton = document.querySelectorAll(".search-video");
+        videoSkelton.forEach((video2) => {
+          video2.remove();
+        });
+
+        const main = document.querySelector("main");
+        videos.forEach((video, index) => {
+          // 動画の内容を差し替える
+          const videoCard = createVideoCard(video);
+          main.appendChild(videoCard);
+        });
+      }
+    }
+    async function loadSponsorVideo() {
       // スポンサー動画の内容を差し替える
       const response = await fetch("/api/sponsoredVideos");
       const data = await response.json();
       const video = data.items[0];
-      const sponsorResult = document.querySelector(".sponsor-result");
-      loadResult(sponsorResult, video);
+      const sponsorVideoCard = document.querySelector(".sponsor-result");
+      updateSponsorVideo(sponsorVideoCard, video);
     }
-    document.addEventListener("DOMContentLoaded", loadVideos);
+    async function loadChannel() {
+      // チャンネルの内容を差し替える
+      const response = await fetch("/api/channels");
+      const data = await response.json();
+      if (data.items.length === 0) {
+        return;
+      }
+      const channel = data.items[0];
+      const channelCard = document.querySelector(".search-channel");
+      updateChannel(channelCard, channel);
+    }
+    async function loadPage() {
+      // 検索バーをロードする
+      await loadSearchBar();
+      // スポンサー動画の内容を差し替える
+      await loadSponsorVideo();
+      // チャンネルの内容を差し替える
+      await loadChannel();
+    }
+    document.addEventListener("DOMContentLoaded", loadPage);
   </script>
   
 </body>
