@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>YouTube風 動画再生画面</title>
+  <style>
+    /* リセット */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f9f9f9;
+      color: #0f0f0f;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* ヘッダー */
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 16px;
+      background-color: #fff;
+      border-bottom: 1px solid #ccc;
+      position: sticky;
+      top: 0;
+      z-index: 999;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .logo img {
+      height: 28px;
+    }
+
+    .search-bar {
+      display: flex;
+      flex: 1;
+      max-width: 600px;
+      margin: 0 16px;
+    }
+
+    .search-bar input {
+      flex: 1;
+      padding: 6px 12px;
+      border: 1px solid #ccc;
+      border-right: none;
+      border-radius: 2px 0 0 2px;
+      outline: none;
+    }
+
+    .search-bar button {
+      padding: 6px 16px;
+      border: 1px solid #ccc;
+      border-left: none;
+      background-color: #f8f8f8;
+      cursor: pointer;
+      border-radius: 0 2px 2px 0;
+    }
+
+    .header-icons {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .header-icons img {
+      width: 24px;
+      height: 24px;
+      cursor: pointer;
+    }
+
+    /* メインコンテンツ領域 */
+    .main-content {
+      display: flex;
+      flex: 1;
+      padding: 16px;
+      gap: 16px;
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    /* 左側（動画と配信情報） */
+    .video-section {
+      flex: 1 1 0;
+      min-width: 0; /* Flexboxでの縮小時のはみ出し防止 */
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .video-container {
+      background-color: #000;
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9; /* アスペクト比を固定（対応ブラウザに注意） */
+      overflow: hidden;
+      border-radius: 8px;
+    }
+
+    .video-container img {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .video-details {
+      background-color: #fff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 16px;
+    }
+
+    .video-title {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 8px;
+      line-height: 1.4;
+    }
+
+    .video-stats {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      color: #555;
+      font-size: 14px;
+      margin-bottom: 12px;
+    }
+
+    .video-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .action-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 6px 12px;
+      background-color: #f2f2f2;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .action-button:hover {
+      background-color: #e2e2e2;
+    }
+
+    .channel-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .channel-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .channel-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .channel-details {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .channel-name {
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    .subscribe-button {
+      padding: 6px 12px;
+      background-color: #cc0000;
+      color: #fff;
+      border: none;
+      border-radius: 2px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: bold;
+      margin-left: auto;
+    }
+
+    .subscribe-button:hover {
+      background-color: #ff0000;
+    }
+
+    /* 右側（チャット欄） */
+    .chat-section {
+      flex: 0 0 320px;
+      max-width: 320px;
+      height: calc(100vh - 80px); 
+      position: sticky;
+      top: 64px; /* headerの高さに合わせる */
+      overflow-y: auto;
+      background-color: #fff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 8px;
+    }
+
+    .chat-header {
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+
+    .chat-message {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .chat-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .chat-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .chat-text {
+      background-color: #f2f2f2;
+      padding: 4px 8px;
+      border-radius: 4px;
+      display: inline-block;
+      max-width: 220px;
+      word-wrap: break-word;
+    }
+
+    /* シンプルなスクロールバー非表示例（Chrome系のみ対応） */
+    .chat-section::-webkit-scrollbar {
+      width: 0;
+      background: transparent;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ヘッダー -->
+  <header>
+    <div class="logo">
+      <img src="https://placehold.jp/100x28.png?text=Logo" alt="YouTube Logo" />
+    </div>
+    <div class="search-bar">
+      <input type="text" placeholder="検索" />
+      <button>検索</button>
+    </div>
+    <div class="header-icons">
+      <img src="https://placehold.jp/24x24.png?text=M" alt="Menu" />
+      <img src="https://placehold.jp/24x24.png?text=N" alt="Notifications" />
+      <img src="https://placehold.jp/24x24.png?text=U" alt="User" />
+    </div>
+  </header>
+
+  <!-- メインコンテンツ -->
+  <div class="main-content">
+    <!-- 左側: 動画＋詳細 -->
+    <div class="video-section">
+      <div class="video-container">
+        <!-- 実際は <video> や <iframe> などで埋め込む。ここではplaceholder画像で代用 -->
+        <img src="https://placehold.jp/800x450.png?text=Playing+Video" alt="Video Placeholder" />
+      </div>
+
+      <div class="video-details">
+        <div class="video-title">
+          title
+        </div>
+        <div class="video-stats">
+          <span>10,000 人が視聴中</span>
+          <span>10 分前にライブ配信開始</span>
+        </div>
+        <div class="video-actions">
+          <div class="action-button">👍 1.1万</div>
+          <div class="action-button">👎</div>
+          <div class="action-button">共有</div>
+          <div class="action-button">保存</div>
+          <!-- 必要に応じて「Thanks」やその他ボタンを追加 -->
+        </div>
+
+        <div class="channel-info">
+          <div class="channel-avatar">
+            <img src="https://placehold.jp/48x48.png?text=A" alt="Channel Avatar" />
+          </div>
+          <div class="channel-details">
+            <div class="channel-name">Aチャンネル</div>
+            <div>チャンネル登録者数 100万人</div>
+          </div>
+          <button class="subscribe-button">メンバーになる</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 右側: チャット欄 -->
+    <div class="chat-section">
+      <div class="chat-header">トップチャット ▼</div>
+
+      <!-- チャットメッセージ例 -->
+      <div class="chat-message">
+        <div class="chat-avatar">
+          <img src="https://placehold.jp/32x32.png?text=U1" alt="User Icon" />
+        </div>
+        <div class="chat-text">
+          コメント
+        </div>
+      </div>
+
+      <div class="chat-message">
+        <div class="chat-avatar">
+          <img src="https://placehold.jp/32x32.png?text=U2" alt="User Icon" />
+        </div>
+        <div class="chat-text">
+          コメント
+        </div>
+      </div>
+
+      <div class="chat-message">
+        <div class="chat-avatar">
+          <img src="https://placehold.jp/32x32.png?text=U3" alt="User Icon" />
+        </div>
+        <div class="chat-text">
+          コメント
+        </div>
+      </div>
+
+      <!-- 以下、スクロールで続く想定 -->
+    </div>
+  </div>
+  <script>
+    async function getVideoId() {
+      // クエリパラメータから動画IDを取得
+      const urlParams = new URLSearchParams(window.location.search);
+      const videoId = urlParams.get('v');
+      
+      // videoIdがない場合はリダイレクト
+      if (!videoId) {
+        window.location.href = '/';
+        return;
+      }
+      return videoId;
+    }
+    async function onYouTubeIframeAPIReady() {
+      const videoId = await getVideoId();
+      const player = new YT.Player('player', {
+        videoId : videoId,
+        width   : 480,
+        height  : 270
+      });
+    }
+    // ページロード時に実行される関数
+    async function init() {
+      const videoId = await getVideoId();
+      const headElem   = document.getElementsByTagName('head')[0];
+      const scriptElem = document.createElement('script');
+
+      scriptElem.src = 'https://www.youtube.com/iframe_api';
+
+      headElem.appendChild(scriptElem);
+    }
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>
