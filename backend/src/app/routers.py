@@ -147,3 +147,34 @@ async def get_video(
     if video is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Video not found")
     return video
+
+
+@router.get("/comments", response_model=Page[schemas.Comment])
+async def get_comments(
+    video_id: str,
+    next_page_token: str = None,
+    youtube_client=Depends(youtube.get_youtube_client),
+):
+    response = await youtube.get_comments(youtube_client, video_id, next_page_token)
+    total = response.get('pageInfo', {}).get('totalResults', 0)
+    size = response.get('pageInfo', {}).get('resultsPerPage', 0)
+    page = 1
+    items = response.get('items', [])
+
+    # キャメルケースをスネークケースに変換
+    for item in items:
+        item['comment_id'] = item['id']
+        item['like_count'] = item['snippet']['topLevelComment']['snippet']['likeCount']
+        item['published_at'] = item['snippet']['topLevelComment']['snippet']['publishedAt']
+        item['text_display'] = item['snippet']['topLevelComment']['snippet']['textDisplay']
+        item['author_display_name'] = item['snippet']['topLevelComment']['snippet']['authorDisplayName']
+        item['author_profile_image_url'] = item['snippet']['topLevelComment']['snippet']['authorProfileImageUrl']
+        del item['id']
+        del item['snippet']
+
+    return {
+        "items": items,
+        "total": total,
+        "page": page,
+        "size": size,
+    }

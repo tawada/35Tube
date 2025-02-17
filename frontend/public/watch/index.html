@@ -286,7 +286,7 @@
   <div class="main-content">
     <!-- 左側: 動画＋詳細 -->
     <div class="video-section">
-      <div class="video-container">
+      <div class="video-container" id="player">
         <!-- 実際は <video> や <iframe> などで埋め込む。ここではplaceholder画像で代用 -->
         <img src="https://placehold.jp/800x450.png?text=Playing+Video" alt="Video Placeholder" />
       </div>
@@ -368,17 +368,42 @@
       }
       return videoId;
     }
+    async function getVideoComments(videoId) {
+      // 動画IDを元にコメントを取得
+      const response = await fetch(`/api/comments?video_id=${videoId}`);
+      const data = await response.json();
+      return data.items;
+    }
+    async function loadVideoComments(videoComments) {
+      // コメントを表示
+      const chatSection = document.querySelector('.chat-section');
+      chatSection.innerHTML = '';
+      videoComments.forEach(comment => {
+        const chatMessage = document.createElement('div');
+        chatMessage.classList.add('chat-message');
+        chatMessage.innerHTML = `
+          <div class="chat-avatar">
+            <img src="${comment.author_profile_image_url}" alt="User Icon" />
+          </div>
+          <div class="chat-text">
+            ${comment.text_display}
+          </div>
+        `;
+        chatSection.appendChild(chatMessage);
+      });
+    }
     async function onYouTubeIframeAPIReady() {
       const videoId = await getVideoId();
       const player = new YT.Player('player', {
         videoId : videoId,
-        width   : 480,
-        height  : 270
+        width: 800,
+        height: 450,
       });
     }
     // ページロード時に実行される関数
     async function init() {
       const videoId = await getVideoId();
+      await loadVideoComments(await getVideoComments(videoId));
       const headElem   = document.getElementsByTagName('head')[0];
       const scriptElem = document.createElement('script');
 
