@@ -403,6 +403,10 @@
         </div>
       </div>
       `;
+      // clickしたら動画ページに遷移する
+      videoCard.addEventListener("click", () => {
+        window.location.href = `/watch/?v=${video.video_id}`;
+      });
       return videoCard;
     }
     async function loadSearchBar() {
@@ -453,7 +457,7 @@
       const channelCard = document.querySelector(".search-channel");
       updateChannel(channelCard, channel);
     }
-    async function loadPage() {
+    async function init() {
       // 検索バーをロードする
       await loadSearchBar();
       // スポンサー動画の内容を差し替える
@@ -461,7 +465,7 @@
       // チャンネルの内容を差し替える
       await loadChannel();
     }
-    document.addEventListener("DOMContentLoaded", loadPage);
+    document.addEventListener("DOMContentLoaded", init);
   </script>
   
 </body>

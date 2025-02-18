@@ -64,6 +64,15 @@
       border-radius: 0 2px 2px 0;
     }
 
+    .search-bar form {
+      /* フォーム自体にもflexを当てる */
+      display: flex;
+      flex: 1;
+      margin: 0;
+      padding: 0;
+      border: none; /* 必要に応じて */
+    }
+
     .header-icons {
       display: flex;
       align-items: center;
@@ -249,8 +258,10 @@
     </div>
 
     <div class="search-bar">
-      <input type="text" placeholder="検索" />
-      <button>検索</button>
+      <form action="/results/" method="get">
+        <input type="text" name="search_query" placeholder="検索" />
+        <button type="submit">検索</button>
+      </form>
     </div>
 
     <div class="header-icons">
@@ -342,6 +353,18 @@
   </main>
 
 <script>
+  async function getSponsorVideo() {
+    const response = await fetch("/api/sponsoredVideos");
+    const data = await response.json();
+    const video = data.items[0];
+    return video;
+  }
+  async function getRecommendedVideos() {
+    const response = await fetch("/api/recommendedVideos");
+    const data = await response.json();
+    return data.items;
+  }
+
   function loadVideo(videoCard, video) {
     // 動画の内容を差し替える
     videoCard.innerHTML = `
@@ -354,28 +377,21 @@
     // スケルトンを非表示にする
     videoCard.classList.remove("skeleton", "shimmer");
   }
-  async function loadVideos() {
+  async function init() {
     // スポンサー動画の内容を差し替える
-    const response = await fetch("/api/sponsoredVideos");
-    const data = await response.json();
-    const video = data.items[0];
-    const sponsorVideo = document.querySelector(".sponsor-video");
-    loadVideo(sponsorVideo, video);
+    const sponsorVideo = await getSponsorVideo();
+    const sponsorVideoCard = document.querySelector(".sponsor-video");
+    loadVideo(sponsorVideoCard, sponsorVideo);
 
     // おすすめ動画の内容を差し替える
-    const response2 = await fetch("/api/recommendedVideos");
-    const data2 = await response2.json();
-    const videos = data2.items;
-    const videoCards = document.querySelectorAll(".recommended-video");
-    videos.forEach((video, index) => {
-      loadVideo(videoCards[index], video);
+    const recommendedVideos = await getRecommendedVideos();
+    const recommendedVideoCards = document.querySelectorAll(".recommended-video");
+
+    recommendedVideos.forEach((video, index) => {
+      loadVideo(recommendedVideoCards[index], video);
     });
   }
-  document.querySelector(".search-bar button").addEventListener("click", () => {
-    const searchQuery = document.querySelector(".search-bar input").value;
-    window.location.href = `/results/?search_query=${searchQuery}`;
-  });
-  document.addEventListener("DOMContentLoaded", loadVideos);
+  document.addEventListener("DOMContentLoaded", init);
 </script>
 
 </body>
