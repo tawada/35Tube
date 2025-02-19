@@ -331,25 +331,6 @@
 
       </div>
     </section>
-
-    <!-- ショート (Shorts) -->
-    <section>
-      <div class="section-title">ショート</div>
-      <div class="shorts-container">
-        <div class="short-item">
-          <div class="short-thumb" style="background-image: url('https://placehold.jp/120x140.png?text=Thumb');"></div>
-          <div class="short-title">title</div>
-        </div>
-        <div class="short-item">
-            <div class="short-thumb" style="background-image: url('https://placehold.jp/120x140.png?text=Thumb');"></div>
-            <div class="short-title">title</div>
-          </div>
-        <div class="short-item">
-            <div class="short-thumb" style="background-image: url('https://placehold.jp/120x140.png?text=Thumb');"></div>
-            <div class="short-title">title</div>
-          </div>
-      </div>
-    </section>
   </main>
 
 <script>
@@ -376,6 +357,10 @@
     `;
     // スケルトンを非表示にする
     videoCard.classList.remove("skeleton", "shimmer");
+    // クリックで動画ページに遷移する
+    videoCard.addEventListener("click", () => {
+      location.href = `/watch/?v=${video.video_id}`;
+    });
   }
   async function init() {
     // スポンサー動画の内容を差し替える
