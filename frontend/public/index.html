@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
-  <title>YouTube風ページ</title>
+  <title>35Tube</title>
   <style>
     /* リセット用 */
     * {
@@ -290,7 +290,7 @@
     <!-- スポンサー枠など -->
     <section>
       <div class="section-title">スポンサー広告</div>
-      <div class="videos-grid">
+      <div class="videos-grid sponsor-video">
         <div class="video-card skeleton shimmer sponsor-video">
           <div class="video-thumb"></div>
           <div class="video-info">
@@ -304,7 +304,7 @@
     <!-- 通常の動画リスト -->
     <section>
       <div class="section-title">おすすめ動画</div>
-      <div class="videos-grid">
+      <div class="videos-grid recommended-videos">
         <div class="video-card skeleton shimmer recommended-video">
           <div class="video-thumb"></div>
           <div class="video-info">
@@ -346,8 +346,9 @@
     return data.items;
   }
 
-  function loadVideo(videoCard, video) {
-    // 動画の内容を差し替える
+  function createVideoCard(video) {
+    const videoCard = document.createElement("div");
+    videoCard.classList.add("video-card");
     videoCard.innerHTML = `
       <div class="video-thumb" style="background-image: url('${video.thumbnail}');"></div>
       <div class="video-info">
@@ -355,25 +356,31 @@
         <p>${video.description}</p>
       </div>
     `;
-    // スケルトンを非表示にする
-    videoCard.classList.remove("skeleton", "shimmer");
-    // クリックで動画ページに遷移する
     videoCard.addEventListener("click", () => {
       location.href = `/watch/?v=${video.video_id}`;
     });
+    return videoCard;
+  }
+  function removeAllVideoCards() {
+    const videoCards = document.querySelectorAll(".video-card");
+    videoCards.forEach((card) => {
+      card.remove();
+    });
   }
   async function init() {
+    removeAllVideoCards();
     // スポンサー動画の内容を差し替える
     const sponsorVideo = await getSponsorVideo();
-    const sponsorVideoCard = document.querySelector(".sponsor-video");
-    loadVideo(sponsorVideoCard, sponsorVideo);
+    const sponsorVideoCard = createVideoCard(sponsorVideo);
+    document.querySelector(".sponsor-video").appendChild(sponsorVideoCard);
 
     // おすすめ動画の内容を差し替える
     const recommendedVideos = await getRecommendedVideos();
     const recommendedVideoCards = document.querySelectorAll(".recommended-video");
 
     recommendedVideos.forEach((video, index) => {
-      loadVideo(recommendedVideoCards[index], video);
+      const videoCard = createVideoCard(video);
+      document.querySelector(".recommended-videos").appendChild(videoCard);
     });
   }
   document.addEventListener("DOMContentLoaded", init);
