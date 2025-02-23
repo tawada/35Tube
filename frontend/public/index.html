@@ -258,7 +258,7 @@
     </div>
 
     <div class="search-bar">
-      <form action="/results/" method="get">
+      <form>
         <input type="text" name="search_query" placeholder="検索" />
         <button type="submit">検索</button>
       </form>
@@ -367,7 +367,21 @@
       card.remove();
     });
   }
+  async function submitForm(event) {
+    event.preventDefault();
+    const searchQuery = event.target.search_query.value;
+    if (!searchQuery) {
+      return;
+    }
+    location.href = `/results/?search_query=${searchQuery}`;
+  }
+  async function addSubmitForm() {
+      // 検索フォームの送信イベントを登録
+      document.querySelector(".search-bar form").addEventListener("submit", submitForm);
+  }
   async function init() {
+    await addSubmitForm();
+    // 既存の動画カードを削除
     removeAllVideoCards();
     // スポンサー動画の内容を差し替える
     const sponsorVideo = await getSponsorVideo();

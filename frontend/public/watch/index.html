@@ -68,6 +68,15 @@
       border-radius: 0 2px 2px 0;
     }
 
+    .search-bar form {
+      /* フォーム自体にもflexを当てる */
+      display: flex;
+      flex: 1;
+      margin: 0;
+      padding: 0;
+      border: none; /* 必要に応じて */
+    }
+
     .header-icons {
       display: flex;
       gap: 16px;
@@ -269,12 +278,16 @@
   <!-- ヘッダー -->
   <header>
     <div class="logo">
-      <img src="https://placehold.jp/100x28.png?text=Logo" alt="YouTube Logo" />
+      <img src="/img/logo.svg" alt="Logo" />
     </div>
+
     <div class="search-bar">
-      <input type="text" placeholder="検索" />
-      <button>検索</button>
+      <form>
+        <input type="text" name="search_query" placeholder="検索" />
+        <button type="submit">検索</button>
+      </form>
     </div>
+
     <div class="header-icons">
       <img src="https://placehold.jp/24x24.png?text=M" alt="Menu" />
       <img src="https://placehold.jp/24x24.png?text=N" alt="Notifications" />
@@ -283,7 +296,7 @@
   </header>
 
   <!-- メインコンテンツ -->
-  <div class="main-content">
+  <main class="main-content">
     <!-- 左側: 動画＋詳細 -->
     <div class="video-section">
       <div class="video-container" id="player">
@@ -354,8 +367,20 @@
 
       <!-- 以下、スクロールで続く想定 -->
     </div>
-  </div>
+  </main>
   <script>
+    async function submitForm(event) {
+      event.preventDefault();
+      const searchQuery = event.target.search_query.value;
+      if (!searchQuery) {
+        return;
+      }
+      location.href = `/results/?search_query=${searchQuery}`;
+    }
+    async function addSubmitForm() {
+      // 検索フォームの送信イベントを登録
+      document.querySelector(".search-bar form").addEventListener("submit", submitForm);
+    }
     async function getVideoId() {
       // クエリパラメータから動画IDを取得
       const urlParams = new URLSearchParams(window.location.search);
@@ -402,6 +427,7 @@
     }
     // ページロード時に実行される関数
     async function init() {
+      await addSubmitForm()
       const videoId = await getVideoId();
       await loadVideoComments(await getVideoComments(videoId));
       const headElem   = document.getElementsByTagName('head')[0];
