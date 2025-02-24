@@ -139,6 +139,12 @@
       line-height: 1.4;
     }
 
+    .video-description {
+      font-size: 14px;
+      color: #333;
+      margin-bottom: 16px;
+    }
+
     .video-stats {
       display: flex;
       align-items: center;
@@ -308,6 +314,9 @@
         <div class="video-title">
           title
         </div>
+        <div class="video-description">
+          description
+        </div>
         <div class="video-stats">
           <span>10,000 人が視聴中</span>
           <span>10 分前にライブ配信開始</span>
@@ -393,6 +402,16 @@
       }
       return videoId;
     }
+    async function loadVideoInfo(videoId) {
+      // 動画IDを元に動画情報を取得
+      const response = await fetch(`/api/video?video_id=${videoId}`);
+      const video = await response.json();
+      document.querySelector('.video-title').textContent = video.title;
+      document.querySelector('.video-description').textContent = video.description;
+      // チャンネル
+      document.querySelector('.channel-name').textContent = video.author;
+      document.querySelector('.channel-avatar img').src = video.thumbnail;
+    }
     async function getVideoComments(videoId) {
       // 動画IDを元にコメントを取得
       const response = await fetch(`/api/comments?video_id=${videoId}`);
@@ -429,6 +448,7 @@
     async function init() {
       await addSubmitForm()
       const videoId = await getVideoId();
+      await loadVideoInfo(videoId);
       await loadVideoComments(await getVideoComments(videoId));
       const headElem   = document.getElementsByTagName('head')[0];
       const scriptElem = document.createElement('script');
