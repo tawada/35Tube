@@ -5,4 +5,4 @@ fastapi
 fastapi-pagination
 sqlalchemy
 uvicorn
-setuptools==75.8.0
+setuptools==78.1.1
