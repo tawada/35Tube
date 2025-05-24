@@ -1,5 +1,8 @@
 """FastAPI app entry point."""
-from app.app import app
+from app import app
+from fastapi_pagination import add_pagination
+
+add_pagination(app)
 
 if __name__ == '__main__':
     import uvicorn

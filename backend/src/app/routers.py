@@ -4,7 +4,7 @@ from fastapi_pagination.ext.sqlalchemy import paginate
 from sqlalchemy import select, func
 from sqlalchemy.orm import Session
 
-from ..config import settings
+from config import settings
 
 from . import database, models, schemas, youtube
 
@@ -25,12 +25,7 @@ router = APIRouter(
 async def get_channels(
     db: Session = Depends(database.get_db),
 ):
-    return {
-        "items": [db.query(models.Channel).order_by(func_random()).first()],
-        "total": None,
-        "page": None,
-        "size": None,
-    }
+    return paginate(db.query(models.Channel))
 
 
 @router.get("/sponsoredVideos", response_model=Page[schemas.Video])
