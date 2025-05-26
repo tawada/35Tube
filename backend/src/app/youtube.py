@@ -1,6 +1,6 @@
 from googleapiclient.discovery import build
 
-from config import settings
+from ..config import settings
 
 
 async def get_youtube_client():

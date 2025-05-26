@@ -4,7 +4,7 @@ from fastapi_pagination.ext.sqlalchemy import paginate
 from sqlalchemy import select, func
 from sqlalchemy.orm import Session
 
-from config import settings
+from ..config import settings
 
 from . import database, models, schemas, youtube
 
